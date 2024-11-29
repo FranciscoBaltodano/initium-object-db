@@ -2,7 +2,7 @@ CREATE SCHEMA initium;
 
 CREATE TABLE initium.users(
     id INT IDENTITY(1,1) PRIMARY KEY,
-    firstname VARCHAR(255) NOT NULL,
+    firstname VARCHAR(255) NOT NULL, 
     lastname VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
     active BIT DEFAULT 0,
@@ -30,12 +30,3 @@ CREATE TABLE initium.notes(
     title VARCHAR(255) NOT NULL,
 );
 
-select * from initium.users;
-select * from initium.activation_codes;
-select * from initium.cards;
-select * from initium.notes;
-
-DELETE FROM initium.notes;
-DELETE FROM initium.cards;
-DELETE FROM initium.activation_codes;
-DELETE FROM initium.users;

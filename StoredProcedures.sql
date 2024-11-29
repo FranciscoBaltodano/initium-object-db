@@ -1,4 +1,22 @@
--- otd.activate_user
+
+CREATE OR ALTER PROCEDURE initium.activate_user(
+    @email NVARCHAR(255)
+)
+AS
+BEGIN
+        UPDATE initium.users
+        SET 
+            active = 1,
+            updated_at = GETDATE()
+        WHERE email = @email;
+
+        DELETE FROM initium.activation_codes
+        WHERE email = @email;
+
+        SELECT 200 status, 'User activated successfully' message;
+END;
+
+
 CREATE OR ALTER PROCEDURE initium.generate_activation_code( 
     @email NVARCHAR(255),
     @code INT    
@@ -59,7 +77,7 @@ BEGIN
     END ELSE BEGIN
         DELETE from initium.cards 
         where id = @card_id;
-        SELECT 200 status, 'ok' message;
+        SELECT 200 status, 'card deleted' message;
     END;
 END;
 
@@ -89,6 +107,8 @@ BEGIN
                 title =  @title,
                 description = @description
             WHERE id = @id
+
+            SELECT 200 status, 'Card updated successfully' message
         END
 END
 
@@ -104,4 +124,53 @@ BEGIN
 END
 
 
+CREATE OR ALTER PROCEDURE initium.get_cards
+AS
+BEGIN
+    SET NOCOUNT ON
+    SELECT * FROM initium.cards ORDER BY id DESC
+END
+
+
+CREATE OR ALTER PROCEDURE initium.get_card_by_id (
+    @id INT
+)
+AS
+BEGIN
+    SET NOCOUNT ON;
+
+    DECLARE @n INT = (
+        SELECT COUNT(*)
+        FROM initium.cards
+        WHERE id = @id
+    );
+
+    IF @n = 0
+    BEGIN
+        SELECT 404 AS status, 'Card not found' AS message;
+    END
+    ELSE
+    BEGIN
+        SELECT id, title, description
+        FROM initium.cards
+        WHERE id = @id;
+    END
+END;
+
+
+
+
+CREATE OR ALTER PROCEDURE GetUserByEmail
+    @email NVARCHAR(255)
+AS
+BEGIN
+    SELECT
+        id,
+        email,
+        firstname,
+        lastname,
+        CONVERT(VARCHAR(19), updated_at, 120) AS updated_at
+    FROM initium.users
+    WHERE email = @Email;
+END
 

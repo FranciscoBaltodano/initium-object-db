@@ -10,9 +10,6 @@ BEGIN
             updated_at = GETDATE()
         WHERE email = @email;
 
-        DELETE FROM initium.activation_codes
-        WHERE email = @email;
-
         SELECT 200 status, 'User activated successfully' message;
 END;
 
@@ -35,6 +32,7 @@ BEGIN
         VALUES( @email, @code )
     END;
 END;
+
 
 CREATE OR ALTER PROCEDURE initium.create_user(
     @firstname NVARCHAR(255),
@@ -164,13 +162,15 @@ CREATE OR ALTER PROCEDURE GetUserByEmail
     @email NVARCHAR(255)
 AS
 BEGIN
+    DECLARE @get_time DATETIME = GETDATE();
+
     SELECT
         id,
         email,
         firstname,
         lastname,
-        CONVERT(VARCHAR(19), updated_at, 120) AS updated_at
+        CONVERT(VARCHAR(19), updated_at, 120) AS updated_at,
+        CONVERT(VARCHAR(19), @get_time, 120) AS get_time
     FROM initium.users
     WHERE email = @Email;
 END
-
